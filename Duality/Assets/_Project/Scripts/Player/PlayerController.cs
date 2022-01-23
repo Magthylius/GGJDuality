@@ -12,14 +12,18 @@ namespace Duality.Player
     {
         [Header("References")] 
         public Transform Yin;
+        public TrailRenderer YinMoveTrail;
+        public TrailRenderer YinSpinTrail;
         public Transform Yang;
+        public TrailRenderer YangMoveTrail;
+        public TrailRenderer YangSpinTrail;
         public CinemachineVirtualCamera VirtualCamera;
 
         [Header("General Settings")] 
         public float pairDistance;
         public float mainMass = 1000f;
         public float subMass = 1f;
-        
+
         [Header("Movement Settings")] 
         public float movementLerp = 5f;
         public float movementPower = 5f;
@@ -82,12 +86,20 @@ namespace Duality.Player
                     _main = Yin;
                     _sub = Yang;
                     _spinDir = 1;
+                    YinMoveTrail.emitting = true;
+                    YinSpinTrail.emitting = false;
+                    YangMoveTrail.emitting = false;
+                    YangSpinTrail.emitting = true;
                     break;
                 
                 case PlayerMode.Yang:
                     _main = Yang;
                     _sub = Yin;
                     _spinDir = -1;
+                    YinMoveTrail.emitting = false;
+                    YinSpinTrail.emitting = true;
+                    YangMoveTrail.emitting = true;
+                    YangSpinTrail.emitting = false;
                     break;
             }
 
