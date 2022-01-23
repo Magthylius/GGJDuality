@@ -5,7 +5,7 @@ using Magthylius;
 
 namespace Duality.Core
 {
-    public class CoreManager : SoftSingleton<CoreManager>
+    public class CoreManager : SoftSingletonPersistent<CoreManager>
     {
         [SerializeField] private Color firstColor;
         [SerializeField] private Color secondColor;
