@@ -32,6 +32,13 @@ namespace Magthylius
             if (t > tSnap) return b;
             return value;
         }
+        
+        public static Vector2 LerpSnap(Vector2 a, Vector2 b, float t, float tSnap)
+        {
+            Vector2 value = Vector2.Lerp(a, b, t);
+            if (t > tSnap) return b;
+            return value;
+        }
 
         public static float InverseLerp(Vector2 range, float value) => Mathf.InverseLerp(range.x, range.y, value);
 

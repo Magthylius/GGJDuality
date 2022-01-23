@@ -2,8 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using Magthylius;
 
 namespace Duality.Player
 {
@@ -17,10 +18,18 @@ namespace Duality.Player
         [Header("Settings")] 
         public float pairDistance;
 
-        public float spinPower = 5f;
-        public float initialAngularDrag = 0f;
-        public float endAngularDrag = 10f;
+        public float mainMass = 1000f;
+        public float subMass = 1f;
+        
+        public float movementLerp = 5f;
+        public float mouseClickLerp = 5f;
 
+        public float movementPower = 5f;
+        public float endLinearDrag = 10f;
+            
+        public float spinPower = 5f;
+        public float endAngularDrag = 10f;
+        
         private Transform _main;
         private Transform _sub;
         private Rigidbody2D _mainRB;
@@ -28,40 +37,39 @@ namespace Duality.Player
         
         private PlayerMode _mode;
 
+        private bool _isMoving = false;
+        private Vector2 _movementStep = Vector2.zero;
+        private Vector2 _movementInput = Vector2.zero;
+
+        private bool _isSpinning = false;
+        private float _mouseClickStep = 0f;
+        private float _mouseClickInput = 0f;
+
         private void Start()
         {
             Vector3 halfDistance = new Vector3(pairDistance * 0.5f, 0f, 0f);
             Yin.position = halfDistance;
             Yang.position = -halfDistance;
 
-            ResolveMode();
+            ResolvePairSettings();
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space)) ToggleMode();
-            _mainRB.AddForce(MovementInput, ForceMode2D.Force);
-
-            if (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse1))
-            {
-                _subRB.angularDrag = initialAngularDrag;
-            }
+            _movementStep = MathEx.LerpSnap(_movementStep, _movementInput, movementLerp * Time.deltaTime, 0.99f);
+            _mouseClickStep = MathEx.LerpSnap(_mouseClickStep, _mouseClickInput, mouseClickLerp * Time.deltaTime, 0.99f);
             
-            if (Input.GetKeyUp(KeyCode.Mouse0) || Input.GetKeyUp(KeyCode.Mouse1))
-            {
-                _subRB.angularDrag = endAngularDrag;
-            }
-            
-            _subRB.AddForce(_sub.up * MouseInput * spinPower, ForceMode2D.Force);
+            _mainRB.AddForce(_movementStep * movementPower, ForceMode2D.Force);
+            _subRB.AddForce(_sub.up * _mouseClickStep * spinPower, ForceMode2D.Force);
         }
 
         public void ToggleMode()
         {
             _mode = _mode == PlayerMode.Yin ? PlayerMode.Yang : PlayerMode.Yin;
-            ResolveMode();
+            ResolvePairSettings();
         }
 
-        private void ResolveMode()
+        private void ResolvePairSettings()
         {
             switch (_mode)
             {
@@ -78,12 +86,43 @@ namespace Duality.Player
 
             _mainRB = _main.GetComponent<Rigidbody2D>();
             _subRB = _sub.GetComponent<Rigidbody2D>();
+
+            _mainRB.mass = mainMass;
+            _mainRB.angularDrag = 0f;
+            
+            _subRB.mass = subMass;
             _subRB.angularDrag = endAngularDrag;
+            
             VirtualCamera.Follow = _main;
+            VirtualCamera.LookAt = _main;
         }
 
-        private Vector2 MovementInput => new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        private float MouseInput => Input.GetAxis("MouseRot");
+        public void OnMovement(InputAction.CallbackContext callback)
+        {
+            _movementInput = callback.ReadValue<Vector2>();
+
+            if (callback.performed)
+                _mainRB.drag = 0f;
+            else if (callback.canceled)
+                _mainRB.drag = endLinearDrag;
+            
+        }
+
+        public void OnMouseClick(InputAction.CallbackContext callback)
+        {
+            _mouseClickInput = callback.ReadValue<float>();
+            
+            if (callback.performed)
+                _subRB.angularDrag = 0f;
+            else if (callback.canceled)
+                _subRB.angularDrag = endAngularDrag;
+        }
+
+        public void OnSwap(InputAction.CallbackContext callback)
+        {
+            if (callback.performed) ToggleMode();
+        }
+        
         public PlayerMode CurrentMode => _mode;
     }
 }
