@@ -129,11 +129,17 @@ namespace Duality.Player
         public void OnMouseClick(InputAction.CallbackContext callback)
         {
             _mouseClickInput = callback.ReadValue<float>();
-            
+
             if (callback.performed)
+            {
                 _subRB.angularDrag = 0f;
+                _subRB.drag = 0f;
+            }
             else if (callback.canceled)
+            {
                 _subRB.angularDrag = endAngularDrag;
+                _subRB.drag = endLinearDrag;
+            }
 
             _isSpinning = callback.phase == InputActionPhase.Performed;
         }
