@@ -6,14 +6,14 @@ namespace Magthylius
 {
     public static class ColliderEx
     {
-        /// <summary>Disable and reenables the collider to force collision to trigger again.</summary>
+        /// <summary>Disable and re-enables the collider to force collision to trigger again.</summary>
         public static void Retrigger(this Collider2D collider)
         {
             collider.enabled = false;
             collider.enabled = true;
         }
 
-        /// <summary>Disable and reenables the collider to force collision to trigger again.</summary>
+        /// <summary>Disable and re-enables the collider to force collision to trigger again.</summary>
         public static void Retrigger(this Collider collider)
         {
             collider.enabled = false;
@@ -25,6 +25,12 @@ namespace Magthylius
 
         /// <summary>Parent of this collider transform.</summary>
         public static Transform Parent(this Collider collider) => collider.transform.parent;
+
+        /// <summary>Name of the attached GameObject of collider.</summary>
+        public static string Name(this Collider2D collider) => collider.gameObject.name;
+        
+        /// <summary>Name of the attached GameObject of collider.</summary>
+        public static string Name(this Collider collider) => collider.gameObject.name;
     }
 
     public static class RaycastHitEx
