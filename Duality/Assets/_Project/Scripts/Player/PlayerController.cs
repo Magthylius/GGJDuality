@@ -39,9 +39,7 @@ namespace Duality.Player
         private PairElement _sub;
         private Rigidbody2D _mainRB;
         private Rigidbody2D _subRB;
-        private Vector3 _mainScaleV;
-        private Vector3 _subScaleV;
-        
+
         private PlayerMode _mode;
         private int _spinDir = 1;
         private bool _isSpinning = false;
@@ -58,8 +56,6 @@ namespace Duality.Player
             Vector3 halfDistance = new Vector3(pairDistance * 0.5f, 0f, 0f);
             YinTR.position = halfDistance;
             YangTr.position = -halfDistance;
-            _mainScaleV = Vector3Ex.New(mainScale);
-            _subScaleV = Vector3Ex.New(subScale);
 
             ResolvePairSettings();
         }
@@ -73,13 +69,6 @@ namespace Duality.Player
             _mainRB.velocity = MathEx.MagnitudeCap(_mainRB.velocity, maxMovementSpeed);
             _subRB.AddForce(_sub.transform.up * _mouseClickStep * spinPower * _spinDir, ForceMode2D.Force);
             _subRB.velocity = MathEx.MagnitudeCap(_subRB.velocity, maxSpinSpeed);
-
-            /*
-            _main.transform.localScale =
-                MathEx.LerpSnap(_main.transform.localScale, _mainScaleV, scaleLerp * Time.deltaTime, 0.99f);
-            
-            _sub.transform.localScale =
-                MathEx.LerpSnap(_sub.transform.localScale, _subScaleV, scaleLerp * Time.deltaTime, 0.99f);*/
         }
 
         public void ToggleMode()
