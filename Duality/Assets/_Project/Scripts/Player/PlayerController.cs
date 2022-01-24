@@ -64,9 +64,8 @@ namespace Duality.Player
         {
             _movementStep = MathEx.LerpSnap(_movementStep, _movementInput, movementLerp * Time.deltaTime, 0.99f);
             _mouseClickStep = MathEx.LerpSnap(_mouseClickStep, _mouseClickInput, spinLerp * Time.deltaTime, 0.99f);
-            
-            _mainRB.AddForce(_movementStep * movementPower, ForceMode2D.Force);
-            _mainRB.velocity = MathEx.MagnitudeCap(_mainRB.velocity, maxMovementSpeed);
+
+            _mainRB.velocity = _movementStep * movementPower;
             _subRB.AddForce(_sub.transform.up * _mouseClickStep * spinPower * _spinDir, ForceMode2D.Force);
             _subRB.velocity = MathEx.MagnitudeCap(_subRB.velocity, maxSpinSpeed);
         }
