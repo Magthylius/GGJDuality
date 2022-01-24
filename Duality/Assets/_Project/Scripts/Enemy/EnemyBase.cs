@@ -4,17 +4,22 @@ using System.Collections.Generic;
 using Magthylius;
 using UnityEngine;
 using Duality.Core;
+using MoreMountains.Feedbacks;
 
 namespace Duality.Enemy
 {
     public class EnemyBase : MonoBehaviourPoolable, IDamagable
     {
+        [Header("References")]
         public new Rigidbody2D rigidbody;
+        public MMFeedbacks deathFeedback;
         
+        [Header("Ragdoll Settings")]
         public float ragdollTime;
         public bool isRagdolling;
         private float _ragdollStartTime;
-
+        
+        [Header("Death Settings")]
         public float deathSpeed = 50f;
         public bool isDead = false;
         
@@ -41,6 +46,8 @@ namespace Duality.Enemy
         {
             //! TODO: Fireworks death
             Dump();
+            //(MMFeedbackParticlesInstantiation)deathFeedback.Feedbacks[0].
+            deathFeedback.PlayFeedbacks(transform.position);
         }
 
         private IEnumerator RagdollLogic()
