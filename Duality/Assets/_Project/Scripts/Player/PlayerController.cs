@@ -11,12 +11,8 @@ namespace Duality.Player
     public class PlayerController : MonoBehaviour
     {
         [Header("References")] 
-        public Transform Yin;
-        public TrailRenderer YinMoveTrail;
-        public TrailRenderer YinSpinTrail;
-        public Transform Yang;
-        public TrailRenderer YangMoveTrail;
-        public TrailRenderer YangSpinTrail;
+        public PairElement YinElement;
+        public PairElement YangElement;
         public CinemachineVirtualCamera VirtualCamera;
 
         [Header("General Settings")] 
@@ -36,8 +32,8 @@ namespace Duality.Player
         public float endAngularDrag = 10f;
         public float maxSpinSpeed = 25f;
         
-        private Transform _main;
-        private Transform _sub;
+        private PairElement _main;
+        private PairElement _sub;
         private Rigidbody2D _mainRB;
         private Rigidbody2D _subRB;
         
@@ -55,8 +51,8 @@ namespace Duality.Player
         private void Start()
         {
             Vector3 halfDistance = new Vector3(pairDistance * 0.5f, 0f, 0f);
-            Yin.position = halfDistance;
-            Yang.position = -halfDistance;
+            YinTR.position = halfDistance;
+            YangTr.position = -halfDistance;
 
             ResolvePairSettings();
         }
@@ -68,7 +64,7 @@ namespace Duality.Player
             
             _mainRB.AddForce(_movementStep * movementPower, ForceMode2D.Force);
             _mainRB.velocity = MathEx.MagnitudeCap(_mainRB.velocity, maxMovementSpeed);
-            _subRB.AddForce(_sub.up * _mouseClickStep * spinPower * _spinDir, ForceMode2D.Force);
+            _subRB.AddForce(_sub.transform.up * _mouseClickStep * spinPower * _spinDir, ForceMode2D.Force);
             _subRB.velocity = MathEx.MagnitudeCap(_subRB.velocity, maxSpinSpeed);
         }
 
@@ -83,25 +79,20 @@ namespace Duality.Player
             switch (_mode)
             {
                 case PlayerMode.Yin:
-                    _main = Yin;
-                    _sub = Yang;
+                    _main = YinElement;
+                    _sub = YangElement;
                     _spinDir = 1;
-                    YinMoveTrail.emitting = true;
-                    YinSpinTrail.emitting = false;
-                    YangMoveTrail.emitting = false;
-                    YangSpinTrail.emitting = true;
                     break;
                 
                 case PlayerMode.Yang:
-                    _main = Yang;
-                    _sub = Yin;
+                    _main = YangElement;
+                    _sub = YinElement;
                     _spinDir = -1;
-                    YinMoveTrail.emitting = false;
-                    YinSpinTrail.emitting = true;
-                    YangMoveTrail.emitting = true;
-                    YangSpinTrail.emitting = false;
                     break;
             }
+            
+            _main.ChangeMode(PairElementMode.Move);
+            _sub.ChangeMode(PairElementMode.Spin);
 
             _mainRB = _main.GetComponent<Rigidbody2D>();
             _subRB = _sub.GetComponent<Rigidbody2D>();
@@ -114,8 +105,8 @@ namespace Duality.Player
             _mainRB.angularDrag = 0f;
             _mainRB.drag = _isMoving ? 0f : endLinearDrag;
 
-            VirtualCamera.Follow = _main;
-            VirtualCamera.LookAt = _main;
+            VirtualCamera.Follow = _main.transform;
+            VirtualCamera.LookAt = _main.transform;
         }
 
         public void OnMovement(InputAction.CallbackContext callback)
@@ -148,5 +139,7 @@ namespace Duality.Player
         }
         
         public PlayerMode CurrentMode => _mode;
+        private Transform YinTR => YinElement.transform;
+        private Transform YangTr => YangElement.transform;
     }
 }

@@ -9,4 +9,10 @@ namespace Duality.Player
         Yin,
         Yang
     }
+
+    public enum PairElementMode
+    {
+        Move,
+        Spin
+    }
 }
