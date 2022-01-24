@@ -11,12 +11,17 @@ namespace Duality.Player
         public new Rigidbody2D rigidbody;
         public TrailRenderer spinTrail;
         public TrailRenderer moveTrail;
+        public SpriteRenderer hollowSprite;
+        public SpriteRenderer filledSprite;
 
         [Header("Settings")] 
         public PairElementMode mode;
+        public Color pairColor;
 
         private void Start()
         {
+            hollowSprite.color = pairColor;
+            filledSprite.color = pairColor;
             ResolveTrails();
         }
 
@@ -27,11 +32,15 @@ namespace Duality.Player
                 case PairElementMode.Move:
                     spinTrail.emitting = false;
                     moveTrail.emitting = true;
+                    filledSprite.enabled = true;
+                    hollowSprite.enabled = false;
                     break;
                 
                 case PairElementMode.Spin:
                     spinTrail.emitting = true;
                     moveTrail.emitting = false;
+                    filledSprite.enabled = false;
+                    hollowSprite.enabled = true;
                     break;
             }
         }
