@@ -627,10 +627,10 @@ MonoBehaviour:
   YangElement: {fileID: 1086147301}
   VirtualCamera: {fileID: 782664052}
   pairDistance: 2
-  mainMass: 50
+  mainMass: 500
   subMass: 1
-  mainScale: 0.15
-  subScale: 0.1
+  mainScale: 0.1
+  subScale: 0.07
   scaleLerp: 20
   movementLerp: 5
   movementPower: 500
