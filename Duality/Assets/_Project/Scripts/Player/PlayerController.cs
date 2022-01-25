@@ -60,7 +60,7 @@ namespace Duality.Player
             ResolvePairSettings();
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             _movementStep = MathEx.LerpSnap(_movementStep, _movementInput, movementLerp * Time.deltaTime, 0.99f);
             _mouseClickStep = MathEx.LerpSnap(_mouseClickStep, _mouseClickInput, spinLerp * Time.deltaTime, 0.99f);
