@@ -379,7 +379,7 @@ MonoBehaviour:
     m_ImpulseDuration: 0.2
     m_ImpulseType: 3
     m_DissipationRate: 0
-    m_RawSignal: {fileID: 11400000, guid: 12b5ede874e698048b6aed355a6066e1, type: 2}
+    m_RawSignal: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
     m_AmplitudeGain: 1
     m_FrequencyGain: 1
     m_RepeatMode: 0
@@ -407,7 +407,7 @@ MonoBehaviour:
     m_DissipationMode: 2
     m_DissipationDistance: 100
     m_PropagationSpeed: 343
-  Velocity: {x: 0, y: 0, z: 0}
+  Velocity: {x: 1, y: 1, z: 1}
   ClearImpulseOnStop: 0
 --- !u!1 &110020568
 GameObject:
@@ -900,7 +900,7 @@ MonoBehaviour:
   endLinearDrag: 10
   maxMovementSpeed: 15
   spinLerp: 5
-  spinPower: 7
+  spinPower: 20
   endAngularDrag: 10
   maxSpinSpeed: 25
 --- !u!4 &732012570
