@@ -19,9 +19,7 @@ namespace Duality.Player
         [Header("Settings")] 
         public PairElementMode mode;
         public Color pairColor;
-
-        private float _currentFrameImpulseSqr = 0f;
-        private float _previousFrameImpulseSqr = 0f;
+        public float damagePercentile = 0.15f;
 
         private void Start()
         {
@@ -30,21 +28,11 @@ namespace Duality.Player
             ResolveTrails();
         }
 
-        private void FixedUpdate()
-        {
-            _previousFrameImpulseSqr = _currentFrameImpulseSqr;
-            _currentFrameImpulseSqr = rigidbody.SpeedSqr();
-        }
-
         private void OnCollisionEnter2D(Collision2D col)
         {
-            print(col.gameObject.name);
-            
             if (mode == PairElementMode.Spin && col.gameObject.TryGetComponent(out IDamagable damagable))
             {
-                damagable.TakeDamage(0.25f);
-                //float hit = Mathf.Abs(_currentFrameImpulseSqr - _previousFrameImpulseSqr);
-                //( hit);
+                damagable.TakeDamage(damagePercentile);
             }
         }
 
