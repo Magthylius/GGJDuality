@@ -11,8 +11,8 @@ namespace Duality.Enemy
     {
         public override void OnInspectorGUI()
         {
-            DrawHeader("Test");
-            DrawHeader("Try");
+            DrawLabelHeader("Test");
+            DrawLabelComment("Try");
             DrawLabel("Try2", GUIStyleEx.Header.SetFontColor(Color.red));
             base.OnInspectorGUI();
         }
