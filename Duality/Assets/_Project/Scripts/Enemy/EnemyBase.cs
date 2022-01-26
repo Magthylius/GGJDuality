@@ -41,7 +41,7 @@ namespace Duality.Enemy
         private void Start()
         {
             DeathEvent += OnDeath;
-            StartAllCoroutine();
+            StartAllCoroutines();
         }
 
         private void OnDrawGizmos()
@@ -64,7 +64,7 @@ namespace Duality.Enemy
             }
         }
 
-        public void StartAllCoroutine()
+        public void StartAllCoroutines()
         {
             StartCoroutine(TrackTarget());
             StartCoroutine(AILogic());
