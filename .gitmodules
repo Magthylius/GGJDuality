@@ -1,3 +1,9 @@
 [submodule "Duality\\Assets\\_Project\\Scripts\\ExternalEx"]
 	path = Duality\\Assets\\_Project\\Scripts\\ExternalEx
 	url = https://github.com/Magthylius/UnityLibraries.git
+[submodule "Duality/Asset\\_Project\\Scripts\\External"]
+	path = Duality/Asset\\_Project\\Scripts\\External
+	url = https://github.com/Magthylius/UnityLibraries.git
+[submodule "Duality/Assets\\_Project\\Scripts\\ExternalExt"]
+	path = Duality/Assets\\_Project\\Scripts\\ExternalExt
+	url = https://github.com/Magthylius/UnityLibraries.git
