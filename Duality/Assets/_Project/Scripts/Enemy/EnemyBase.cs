@@ -16,60 +16,113 @@ namespace Duality.Enemy
         
         [Header("Ragdoll Settings")]
         public float ragdollTime;
-        public bool isRagdolling;
+        
         private float _ragdollStartTime;
+        private bool _isRagdolling;
         
         [Header("Death Settings")]
         public float deathSpeed = 50f;
         public bool isDead = false;
         
+        [Header("Tracking settings")]
+        public float trackInterval = 2f;
+        public float trackStopDistance = 5f;
+        public float moveSpeed = 5f;
+        public float stopSpeed = 5f;
+        public float rotSpeed = 5f;
+        public float rotOffset = 90f;
+        
+        private Vector3 _targetPosition;
+        private Vector3 _targetDirection;
+
         public Action DamagedEvent { get; set; }
         public Action DeathEvent { get; set; }
 
         private void Start()
         {
             DeathEvent += OnDeath;
+            StartAllCoroutine();
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawWireSphere(transform.position, trackStopDistance);
+        }
+
+        private void FixedUpdate()
+        {
+            if (!_isRagdolling)
+            {
+                if (!MathEx.InRange(_targetPosition - transform.position, trackStopDistance))
+                    rigidbody.velocity = _targetDirection * moveSpeed * Time.deltaTime;
+                else
+                    rigidbody.velocity = Vector2.Lerp(rigidbody.velocity, Vector2.zero, stopSpeed * Time.deltaTime);
+                
+                Quaternion targetRot = Quaternion.Euler(0f, 0f, MathEx.Atan2Deg(_targetDirection.y, _targetDirection.x) + rotOffset);
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, rotSpeed * Time.deltaTime);
+                rigidbody.angularVelocity = Mathf.Lerp(rigidbody.angularVelocity, 0f, rotSpeed * Time.deltaTime);
+            }
+        }
+
+        public void StartAllCoroutine()
+        {
+            StartCoroutine(TrackTarget());
+            StartCoroutine(AILogic());
         }
 
         public void TakeDamage(float damage)
         {
             rigidbody.mass *= 1f - damage;
 
-            isRagdolling = true;
+            _isRagdolling = true;
             _ragdollStartTime = Time.timeSinceLevelLoad;
-            StartCoroutine(RagdollLogic());
-            
+
             DamagedEvent?.Invoke();
         }
 
         public void OnDeath()
         {
-            //! TODO: Fireworks death
             Dump();
-            //(MMFeedbackParticlesInstantiation)deathFeedback.Feedbacks[0].
+            StopCoroutine(nameof(AILogic));
             deathFeedback.PlayFeedbacks(transform.position);
         }
 
-        private IEnumerator RagdollLogic()
+        private IEnumerator AILogic()
         {
             while (true)
             {
-                if (rigidbody.SpeedSqr() >= MathEx.Square(deathSpeed))
+                if (_isRagdolling)
                 {
-                    isDead = true;
-                    break;
+                    if (rigidbody.SpeedSqr() >= MathEx.Square(deathSpeed))
+                    {
+                        isDead = true;
+                        OnDeath();
+                        break;
+                    }
+                    
+                    if (Time.timeSinceLevelLoad - _ragdollStartTime > ragdollTime)
+                    {
+                        isDead = false;
+                        _isRagdolling = false;
+                        rigidbody.angularVelocity = 0f;
+                    }
                 }
-                else if (Time.timeSinceLevelLoad - _ragdollStartTime > ragdollTime)
+                else
                 {
-                    isDead = false;
-                    break;
+                    _targetDirection = (_targetPosition - transform.position).normalized;
                 }
 
                 yield return null;
             }
-            
-            if (isDead) OnDeath();
-            // else AI LOGIC
+        }
+        
+        private IEnumerator TrackTarget()
+        {
+            while (true)
+            {
+                _targetPosition = CoreManager.MainTransform.position;
+                yield return new WaitForSeconds(trackInterval);
+            }
         }
     }
 

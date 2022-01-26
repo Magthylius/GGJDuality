@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Duality.Player;
 using UnityEngine;
 using Magthylius;
 
@@ -10,6 +11,7 @@ namespace Duality.Core
     {
         [Header("References")] 
         public Camera mainCamera;
+        public PlayerController player;
     
         [Header("Settings")]
         [SerializeField] private Color firstColor;
@@ -27,11 +29,10 @@ namespace Duality.Core
             _gameState = GameState.WaitForStart;
         }
 
-        
-
         public static Color FirstColor => Instance.firstColor;
         public static Color SecondColor => Instance.secondColor;
         public static GameState CurrentState => Instance._gameState;
+        public static Transform MainTransform => Instance.player.MainTR;
 
         public enum GameState
         {

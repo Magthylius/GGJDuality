@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using Magthylius;
 using UnityEditor;
 using UnityEngine;
+using Vector2 = UnityEngine.Vector2;
 
 namespace Duality.Enemy
 {
@@ -11,9 +13,10 @@ namespace Duality.Enemy
     {
         public override void OnInspectorGUI()
         {
-            DrawLabelHeader("Test");
-            DrawLabelComment("Try");
-            DrawLabel("Try2", GUIStyleEx.Header.SetFontColor(Color.red));
+            DrawLabelHeader("Enemy base script");
+            DrawLabelComment("Tries to kill the player");
+
+            DrawPreview(new Rect(Vector2.zero, Vector2.one * 10f));
             base.OnInspectorGUI();
         }
     }

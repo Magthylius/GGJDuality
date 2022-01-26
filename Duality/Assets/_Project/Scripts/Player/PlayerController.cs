@@ -55,7 +55,7 @@ namespace Duality.Player
         {
             Vector3 halfDistance = new Vector3(pairDistance * 0.5f, 0f, 0f);
             YinTR.position = halfDistance;
-            YangTr.position = -halfDistance;
+            YangTR.position = -halfDistance;
 
             ResolvePairSettings();
         }
@@ -150,7 +150,8 @@ namespace Duality.Player
         }
         
         public PlayerMode CurrentMode => _mode;
+        public Transform MainTR => _main.transform;
         private Transform YinTR => YinElement.transform;
-        private Transform YangTr => YangElement.transform;
+        private Transform YangTR => YangElement.transform;
     }
 }
