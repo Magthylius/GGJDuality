@@ -51,13 +51,18 @@ namespace Duality.Player
         private float _mouseClickStep = 0f;
         private float _mouseClickInput = 0f;
 
+        public Action InitializedEvent;
+
         private void Start()
         {
             Vector3 halfDistance = new Vector3(pairDistance * 0.5f, 0f, 0f);
             YinTR.position = halfDistance;
             YangTR.position = -halfDistance;
+            _main = YinElement;
+            _sub = YangElement;
 
             ResolvePairSettings();
+            InitializedEvent?.Invoke();
         }
 
         private void FixedUpdate()
@@ -150,7 +155,9 @@ namespace Duality.Player
         }
         
         public PlayerMode CurrentMode => _mode;
+
         public Transform MainTR => _main.transform;
+    
         private Transform YinTR => YinElement.transform;
         private Transform YangTR => YangElement.transform;
     }

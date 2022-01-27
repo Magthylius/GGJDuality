@@ -673,6 +673,8 @@ MonoBehaviour:
   Prefab: {fileID: 3533005176725199317, guid: 45158da13b986ce44b3fb2e79489dff6, type: 3}
   minRange: 10
   maxRange: 15
+  spawnInterval: 2
+  maxSpawns: 10
 --- !u!4 &585322404
 Transform:
   m_ObjectHideFlags: 0
