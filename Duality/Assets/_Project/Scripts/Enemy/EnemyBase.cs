@@ -13,8 +13,9 @@ namespace Duality.Enemy
         [Header("References")]
         public new Rigidbody2D rigidbody;
         public MMFeedbacks deathFeedback;
-        
-        [Header("Ragdoll Settings")]
+
+        [Header("Ragdoll Settings")] 
+        public float initialMass;
         public float ragdollTime;
         
         private float _ragdollStartTime;
@@ -42,6 +43,7 @@ namespace Duality.Enemy
         {
             DeathEvent += OnDeath;
             StartAllCoroutines();
+            ResetRigidbody();
         }
 
         private void OnDrawGizmos()
@@ -83,8 +85,16 @@ namespace Duality.Enemy
         public void OnDeath()
         {
             Dump();
+            ResetRigidbody();
             StopCoroutine(nameof(AILogic));
             deathFeedback.PlayFeedbacks(transform.position);
+        }
+
+        private void ResetRigidbody()
+        {
+            rigidbody.mass = initialMass;
+            rigidbody.angularVelocity = 0f;
+            rigidbody.velocity = Vector2.zero;
         }
 
         private IEnumerator AILogic()
