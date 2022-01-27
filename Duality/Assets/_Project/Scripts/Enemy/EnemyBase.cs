@@ -13,14 +13,14 @@ namespace Duality.Enemy
         [Header("References")]
         public new Rigidbody2D rigidbody;
         public MMFeedbacks deathFeedback;
+        public LineRenderer line;
 
         [Header("Ragdoll Settings")] 
         public float initialMass;
         public float ragdollTime;
         
         private float _ragdollStartTime;
-        private bool _isRagdolling;
-        
+
         [Header("Death Settings")]
         public float deathSpeed = 50f;
         public bool isDead = false;
@@ -32,9 +32,14 @@ namespace Duality.Enemy
         public float stopSpeed = 5f;
         public float rotSpeed = 5f;
         public float rotOffset = 90f;
-        
+
         private Vector3 _targetPosition;
         private Vector3 _targetDirection;
+
+        [Header("Aim settings")] 
+        public float aimTime;
+
+        private EnemyMode mode = EnemyMode.Normal;
 
         public Action DamagedEvent { get; set; }
         public Action DeathEvent { get; set; }
@@ -44,6 +49,8 @@ namespace Duality.Enemy
             DeathEvent += OnDeath;
             StartAllCoroutines();
             ResetRigidbody();
+            DisableLine();
+            mode = EnemyMode.Normal;
         }
 
         private void OnDrawGizmos()
@@ -53,12 +60,15 @@ namespace Duality.Enemy
 
         private void FixedUpdate()
         {
-            if (!_isRagdolling)
+            if (mode != EnemyMode.Ragdoll)
             {
-                if (!MathEx.InRange(_targetPosition - transform.position, trackStopDistance))
+                if (mode != EnemyMode.Aiming && !MathEx.InRange(_targetPosition - transform.position, trackStopDistance))
                     rigidbody.velocity = _targetDirection * moveSpeed * Time.deltaTime;
                 else
+                {
                     rigidbody.velocity = Vector2.Lerp(rigidbody.velocity, Vector2.zero, stopSpeed * Time.deltaTime);
+                    if (mode != EnemyMode.Aiming) StartAim();
+                }
                 
                 Quaternion targetRot = Quaternion.Euler(0f, 0f, MathEx.Atan2Deg(_targetDirection.y, _targetDirection.x) + rotOffset);
                 transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, rotSpeed * Time.deltaTime);
@@ -76,9 +86,10 @@ namespace Duality.Enemy
         {
             rigidbody.mass *= 1f - damage;
 
-            _isRagdolling = true;
+            mode = EnemyMode.Ragdoll;
             _ragdollStartTime = Time.timeSinceLevelLoad;
-
+            DisableLine();
+            StopCoroutine(nameof(AimUpdate));
             DamagedEvent?.Invoke();
         }
 
@@ -86,6 +97,8 @@ namespace Duality.Enemy
         {
             Dump();
             ResetRigidbody();
+            DisableLine();
+            mode = EnemyMode.Normal;
             StopCoroutine(nameof(AILogic));
             deathFeedback.PlayFeedbacks(transform.position);
         }
@@ -97,11 +110,28 @@ namespace Duality.Enemy
             rigidbody.velocity = Vector2.zero;
         }
 
+        private void StartAim()
+        {
+            mode = EnemyMode.Aiming;
+            EnableLine();
+            StartCoroutine(nameof(AimUpdate));
+        }
+
+        private void DisableLine()
+        {
+            line.enabled = false;
+        }
+
+        private void EnableLine()
+        {
+            line.enabled = true;
+        }
+
         private IEnumerator AILogic()
         {
             while (true)
             {
-                if (_isRagdolling)
+                if (mode == EnemyMode.Ragdoll)
                 {
                     if (rigidbody.SpeedSqr() >= MathEx.Square(deathSpeed))
                     {
@@ -113,7 +143,7 @@ namespace Duality.Enemy
                     if (Time.timeSinceLevelLoad - _ragdollStartTime > ragdollTime)
                     {
                         isDead = false;
-                        _isRagdolling = false;
+                        mode = EnemyMode.Normal;
                         rigidbody.angularVelocity = 0f;
                     }
                 }
@@ -133,6 +163,12 @@ namespace Duality.Enemy
                 _targetPosition = CoreManager.MainTransform.position;
                 yield return new WaitForSeconds(trackInterval);
             }
+        }
+
+        private IEnumerator AimUpdate()
+        {
+            yield return new WaitForSeconds(aimTime);
+            print("shoot");
         }
     }
 

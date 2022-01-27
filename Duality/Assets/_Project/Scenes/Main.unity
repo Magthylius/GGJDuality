@@ -671,6 +671,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initialPoolAmount: 10
   Prefab: {fileID: 3533005176725199317, guid: 45158da13b986ce44b3fb2e79489dff6, type: 3}
+  player: {fileID: 732012569}
+  deathFeedbacks: {fileID: 23277177}
   minRange: 10
   maxRange: 15
   spawnInterval: 2
@@ -951,7 +953,7 @@ MonoBehaviour:
   endLinearDrag: 10
   maxMovementSpeed: 15
   spinLerp: 5
-  spinPower: 20
+  spinPower: 50
   endAngularDrag: 10
   maxSpinSpeed: 25
 --- !u!4 &732012570
