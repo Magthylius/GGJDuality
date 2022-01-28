@@ -2,9 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using Duality.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Magthylius;
+using MoreMountains.Feedbacks;
+using UnityEngine.Serialization;
 
 namespace Duality.Player
 {
@@ -14,6 +17,8 @@ namespace Duality.Player
         public PairElement YinElement;
         public PairElement YangElement;
         public CinemachineVirtualCamera VirtualCamera;
+        public PlayerFollower mouseFollower;
+        public PlayerFollower swapFollower;
 
         [Header("General Settings")] 
         public float pairDistance;
@@ -34,6 +39,10 @@ namespace Duality.Player
         public float spinPower = 5f;
         public float endAngularDrag = 10f;
         public float maxSpinSpeed = 25f;
+
+        [Header("UI Settings")] 
+        public MMFeedbacks helpStart;
+        public MMFeedbacks helpEnd;
         
         private PairElement _main;
         private PairElement _sub;
@@ -101,6 +110,9 @@ namespace Duality.Player
                     _spinDir = -1;
                     break;
             }
+
+            mouseFollower.follow = _main.transform;
+            swapFollower.follow = _sub.transform;
             
             _main.ChangeMode(PairElementMode.Move);
             _sub.ChangeMode(PairElementMode.Spin);
@@ -161,6 +173,20 @@ namespace Duality.Player
         public void OnSwap(InputAction.CallbackContext callback)
         {
             if (callback.performed) ToggleMode();
+        }
+
+        public void OnHelp(InputAction.CallbackContext callback)
+        {
+            if (callback.performed)
+            {
+                helpEnd.StopFeedbacks();
+                helpStart.PlayFeedbacks();
+            }
+            else if (callback.canceled)
+            {
+                helpStart.StopFeedbacks();
+                helpEnd.PlayFeedbacks();
+            }
         }
         
         public PlayerMode CurrentMode => _mode;
