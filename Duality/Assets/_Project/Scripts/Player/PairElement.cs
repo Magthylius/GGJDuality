@@ -44,6 +44,7 @@ namespace Duality.Player
         
         private void OnTriggerEnter2D(Collider2D other)
         {
+            print(LayerMask.LayerToName(other.gameObject.layer));
             if (damagerLayers.Contains(other))
             {
                 controller.Kill();
