@@ -8,12 +8,13 @@ using MoreMountains.Feedbacks;
 
 namespace Duality.Enemy
 {
-    public class EnemyBase : MonoBehaviourPoolable, IDamagable
+    public class EnemyBase : MonoBehaviourPoolable, IDamageable
     {
         [Header("References")]
         public new Rigidbody2D rigidbody;
         public MMFeedbacks deathFeedback;
         public LineRenderer line;
+        public Transform shootPoint;
 
         [Header("Ragdoll Settings")] 
         public float initialMass;
@@ -38,6 +39,7 @@ namespace Duality.Enemy
 
         [Header("Aim settings")] 
         public float aimTime;
+        public float shootImpulseForce = 10f;
 
         private EnemyMode mode = EnemyMode.Normal;
 
@@ -168,7 +170,7 @@ namespace Duality.Enemy
         private IEnumerator AimUpdate()
         {
             yield return new WaitForSeconds(aimTime);
-            print("shoot");
+            EnemyBulletPooler.Instance.Scoop().Shoot(shootPoint.transform.position, transform.up * shootImpulseForce);
         }
     }
 

@@ -30,7 +30,7 @@ namespace Duality.Player
 
         private void OnCollisionEnter2D(Collision2D col)
         {
-            if (mode == PairElementMode.Spin && col.gameObject.TryGetComponent(out IDamagable damagable))
+            if (mode == PairElementMode.Spin && col.gameObject.TryGetComponent(out IDamageable damagable))
             {
                 damagable.TakeDamage(damagePercentile);
             }

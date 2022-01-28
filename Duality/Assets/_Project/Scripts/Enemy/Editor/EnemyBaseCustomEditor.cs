@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
@@ -9,15 +10,12 @@ using Vector2 = UnityEngine.Vector2;
 namespace Duality.Enemy
 {
     [CustomEditor(typeof(EnemyBase))]
-    public class EnemyBaseCustomEditor : CustomEditorBase<EnemyBase>
+    public class EnemyBaseCustomEditor : CustomEditorBase
     {
-        public override void OnInspectorGUI()
+        private void OnEnable()
         {
-            DrawLabelHeader("Enemy base script");
-            DrawLabelComment("Tries to kill the player");
-
-            DrawPreview(new Rect(Vector2.zero, Vector2.one * 10f));
-            base.OnInspectorGUI();
+            Summary = "Enemy base script";
+            Remarks = "Tries to kill the player";
         }
     }
 

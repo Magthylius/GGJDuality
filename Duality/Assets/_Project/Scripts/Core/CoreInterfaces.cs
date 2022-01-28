@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Duality.Core
 {
-    public interface IDamagable
+    public interface IDamageable
     {
         public System.Action DamagedEvent { get; set; }
         public System.Action DeathEvent { get; set; }
