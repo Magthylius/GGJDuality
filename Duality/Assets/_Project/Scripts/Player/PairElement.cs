@@ -4,17 +4,23 @@ using System.Collections.Generic;
 using Duality.Core;
 using UnityEngine;
 using Magthylius;
+using MoreMountains.Feedbacks;
 
 namespace Duality.Player
 {
     public class PairElement : MonoBehaviour
     {
-        [Header("References")]
+        [Header("References")] 
+        public PlayerController controller;
+        public MMFeedbacks deathFeedback;
         public new Rigidbody2D rigidbody;
         public TrailRenderer spinTrail;
         public TrailRenderer moveTrail;
         public SpriteRenderer hollowSprite;
         public SpriteRenderer filledSprite;
+        public GameObject hollowElement;
+        public GameObject filledElement;
+        public LayerMask damagerLayers;
 
         [Header("Settings")] 
         public PairElementMode mode;
@@ -35,6 +41,23 @@ namespace Duality.Player
                 damagable.TakeDamage(damagePercentile);
             }
         }
+        
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (damagerLayers.Contains(other))
+            {
+                controller.Kill();
+            }
+        }
+
+        public void OnDeath()
+        {
+            spinTrail.emitting = false;
+            moveTrail.emitting = false;
+            filledElement.SetActive(false);
+            hollowElement.SetActive(false);
+            deathFeedback.PlayFeedbacks(transform.position);
+        }
 
         private void ResolveTrails()
         {
@@ -43,15 +66,15 @@ namespace Duality.Player
                 case PairElementMode.Move:
                     spinTrail.emitting = false;
                     moveTrail.emitting = true;
-                    filledSprite.enabled = true;
-                    hollowSprite.enabled = false;
+                    filledElement.SetActive(true);
+                    hollowElement.SetActive(false);
                     break;
                 
                 case PairElementMode.Spin:
                     spinTrail.emitting = true;
                     moveTrail.emitting = false;
-                    filledSprite.enabled = false;
-                    hollowSprite.enabled = true;
+                    filledElement.SetActive(false);
+                    hollowElement.SetActive(true);
                     break;
             }
         }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4094628225130455737}
   - component: {fileID: 2462319630139003123}
   m_Layer: 0
-  m_Name: DeathFX
+  m_Name: PlayerDeathFX 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1314,8 +1314,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 0.6922987, b: 0, a: 1}
-        key1: {r: 0.4433962, g: 0, b: 0, a: 1}
+        key0: {r: 0.24056602, g: 0.5486229, b: 1, a: 1}
+        key1: {r: 0.16286935, g: 0.3270462, b: 0.5660378, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -2689,7 +2689,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
   NoiseModule:
-    enabled: 0
+    enabled: 1
     strength:
       serializedVersion: 2
       minMaxState: 0

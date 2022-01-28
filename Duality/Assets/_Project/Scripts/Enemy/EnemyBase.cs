@@ -16,6 +16,8 @@ namespace Duality.Enemy
         public LineRenderer line;
         public Transform shootPoint;
 
+        private CoreManager core;
+
         [Header("Ragdoll Settings")] 
         public float initialMass;
         public float ragdollTime;
@@ -53,6 +55,8 @@ namespace Duality.Enemy
             ResetRigidbody();
             DisableLine();
             mode = EnemyMode.Normal;
+
+            core = CoreManager.Instance;
         }
 
         private void OnDrawGizmos()
@@ -103,6 +107,7 @@ namespace Duality.Enemy
             mode = EnemyMode.Normal;
             StopCoroutine(nameof(AILogic));
             deathFeedback.PlayFeedbacks(transform.position);
+            core.ReportEnemyDeath();
         }
 
         private void ResetRigidbody()

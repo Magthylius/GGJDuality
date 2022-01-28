@@ -52,6 +52,7 @@ namespace Duality.Player
         private float _mouseClickInput = 0f;
 
         public Action InitializedEvent;
+        public Action DeathEvent;
 
         private void Start()
         {
@@ -60,6 +61,9 @@ namespace Duality.Player
             YangTR.position = -halfDistance;
             _main = YinElement;
             _sub = YangElement;
+
+            DeathEvent += YinElement.OnDeath;
+            DeathEvent += YangElement.OnDeath;
 
             ResolvePairSettings();
             InitializedEvent?.Invoke();
@@ -74,7 +78,7 @@ namespace Duality.Player
             _subRB.AddForce(_sub.transform.up * _mouseClickStep * spinPower * _spinDir, ForceMode2D.Force);
             _subRB.velocity = MathEx.MagnitudeCap(_subRB.velocity, maxSpinSpeed);
         }
-
+        
         public void ToggleMode()
         {
             _mode = _mode == PlayerMode.Yin ? PlayerMode.Yang : PlayerMode.Yin;
@@ -117,6 +121,11 @@ namespace Duality.Player
 
             VirtualCamera.Follow = _main.transform;
             VirtualCamera.LookAt = _main.transform;
+        }
+
+        public void Kill()
+        {
+            DeathEvent?.Invoke();
         }
 
         public void OnMovement(InputAction.CallbackContext callback)

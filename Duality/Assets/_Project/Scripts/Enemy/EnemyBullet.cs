@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Duality.Core;
 using Magthylius;
 using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Duality.Enemy
 {
-    public class EnemyBullet : MonoBehaviourPoolable
+    public class EnemyBullet : MonoBehaviourPoolable, IDamager
     {
         public new Rigidbody2D rigidbody;
         public TrailRenderer trail;

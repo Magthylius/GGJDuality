@@ -18,6 +18,9 @@ namespace Duality.Core
         [SerializeField] private Color secondColor;
 
         private GameState _gameState;
+        private int enemyDeathCount = 0;
+
+        public Action<int> EnemyDeathEvent;
 
         private void OnValidate()
         {
@@ -27,6 +30,13 @@ namespace Duality.Core
         void Start()
         {
             _gameState = GameState.WaitForStart;
+        }
+
+        public void ReportEnemyDeath()
+        {
+            enemyDeathCount++;
+            print(enemyDeathCount);
+            EnemyDeathEvent?.Invoke(enemyDeathCount);
         }
 
         public static Color FirstColor => Instance.firstColor;

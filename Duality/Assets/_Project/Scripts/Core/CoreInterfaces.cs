@@ -11,4 +11,9 @@ namespace Duality.Core
         public System.Action DeathEvent { get; set; }
         public void TakeDamage(float damage);
     }
+
+    public interface IDamager
+    {
+        
+    }
 }
