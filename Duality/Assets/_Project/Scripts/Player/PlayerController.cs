@@ -13,6 +13,7 @@ namespace Duality.Player
         [Header("References")] 
         public PairElement YinElement;
         public PairElement YangElement;
+        public RelativeJoint2D joint;
         public CinemachineVirtualCamera VirtualCamera;
         public PlayerFollower mouseFollower;
         public PlayerFollower swapFollower;
@@ -75,9 +76,6 @@ namespace Duality.Player
 
         private void Start()
         {
-            Vector3 halfDistance = new Vector3(pairDistance * 0.5f, 0f, 0f);
-            YinTR.position = halfDistance;
-            YangTR.position = -halfDistance;
             _main = YinElement;
             _sub = YangElement;
 
@@ -104,6 +102,15 @@ namespace Duality.Player
                 _sub.SetHollowColor(ColorEx.LerpSnap(_sub.hollowSprite.color, chargedColor, 5f * Time.deltaTime, 0.99f));
             else
                 _sub.SetHollowColor(ColorEx.LerpSnap(_sub.hollowSprite.color, _sub.OriginalSpinColor, 5f * Time.deltaTime, 0.99f));
+        }
+
+        public void MovePos(Vector3 newPos)
+        {
+            //joint.enabled = false;
+            YinTR.position = newPos;
+            //YangTR.position = newPos + new Vector3(pairDistance, 0f, 0f);
+            //joint.linearOffset = new Vector2(pairDistance, 0f);
+            //joint.enabled = true;
         }
         
         public void ToggleMode()

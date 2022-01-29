@@ -41,6 +41,9 @@ namespace Duality.Core
         void Start()
         {
             CurrentGameState = GameState.WaitForStart;
+            player.InitializedEvent += ResetPos;
+
+            void ResetPos() => player.MovePos(playerSpawnLocation.position);
         }
         
         public void ReportEnemyDeath()
@@ -87,7 +90,7 @@ namespace Duality.Core
         public void Restart()
         {
             CurrentGameState = GameState.Starting;
-            player.MainTR.position = playerSpawnLocation.position;
+            player.MovePos(playerSpawnLocation.position);
 
             _enemyDeathCount = 0;
         }
