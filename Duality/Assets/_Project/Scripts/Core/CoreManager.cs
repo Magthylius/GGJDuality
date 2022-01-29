@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Duality.Player;
 using UnityEngine;
 using Magthylius;
+using MoreMountains.Feedbacks;
+using UnityEngine.InputSystem;
 
 namespace Duality.Core
 {
@@ -12,6 +14,8 @@ namespace Duality.Core
         [Header("References")] 
         public Camera mainCamera;
         public PlayerController player;
+        public MMFeedbacks titleEndLoadFeedback;
+        public MMFeedbacks titleStartLoadFeedback;
     
         [Header("Settings")]
         [SerializeField] private Color firstColor;
@@ -23,6 +27,8 @@ namespace Duality.Core
         public Action<int> EnemyDeathEvent;
         public Action PlayerDeathEvent;
 
+        public Action<GameState> GameStateChangedEvent;
+
         private void OnValidate()
         {
             mainCamera.backgroundColor = secondColor;
@@ -32,7 +38,7 @@ namespace Duality.Core
         {
             _gameState = GameState.WaitForStart;
         }
-
+        
         public void ReportEnemyDeath()
         {
             _enemyDeathCount++;
@@ -42,6 +48,27 @@ namespace Duality.Core
         public void ReportPlayerDeath()
         {
             PlayerDeathEvent?.Invoke();
+        }
+
+        public void OnFire(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                switch (_gameState)
+                {
+                    case GameState.WaitForStart:
+                    {
+                        if (!titleStartLoadFeedback.IsPlaying)
+                        {
+                            titleEndLoadFeedback.PlayFeedbacks();
+                            _gameState = GameState.Gameplay;
+                            GameStateChangedEvent?.Invoke(_gameState);
+                        }
+
+                        break;
+                    }
+                }
+            }
         }
 
         public int EnemyDeathCount => _enemyDeathCount;
@@ -54,7 +81,7 @@ namespace Duality.Core
         {
             WaitForStart,
             Gameplay,
-            WaitForEnd
+            GameEnd
         }
     }
 }
