@@ -72,6 +72,10 @@ namespace Duality.Enemy
         {
             switch (mode)
             {
+                case EnemyMode.Idle:
+                    rigidbody.velocity = Vector2.Lerp(rigidbody.velocity, Vector2.zero, stopSpeed * Time.deltaTime);
+                    break;
+                
                 case EnemyMode.Normal:
                 {
                     if (!InTargetRange)
@@ -81,6 +85,7 @@ namespace Duality.Enemy
 
                     goto case EnemyMode.Looking;
                 }
+                    
                 case EnemyMode.Aiming:
                     rigidbody.velocity = Vector2.Lerp(rigidbody.velocity, Vector2.zero, stopSpeed * Time.deltaTime);
                     goto case EnemyMode.Looking;
@@ -112,6 +117,18 @@ namespace Duality.Enemy
             DamagedEvent?.Invoke();
         }
 
+        public void OnPlayerDeath()
+        {
+            mode = EnemyMode.Idle;
+            StopAllCoroutines();
+            ResetVisuals();
+        }
+
+        public void OnPlayerSpawn()
+        {
+            mode = EnemyMode.Normal;
+        }
+        
         public void OnDeath()
         {
             Dump();

@@ -31,6 +31,7 @@ namespace Duality.Enemy
             player.InitializedEvent += PlayerInit;
             CoreManager.GameStartedEvent += GameStarted;
             CoreManager.GameEndedEvent += EndGame;
+            CoreManager.PlayerSpawnEvent += OnPlayerSpawn;
         }
         
         void PlayerInit()
@@ -48,12 +49,17 @@ namespace Duality.Enemy
         private void StartGame()
         {
             if (_playerInited && _gameStarted)
-                _spawnCor = StartCoroutine(Spawn());   
+                _spawnCor = StartCoroutine(Spawn());
         }
 
         private void EndGame()
         {
             if (_spawnCor != null) StopCoroutine(_spawnCor);
+        }
+
+        private void OnPlayerSpawn()
+        {
+            DumpAll();
         }
 
         private IEnumerator Spawn()
@@ -74,6 +80,8 @@ namespace Duality.Enemy
         protected override void OnPoolableFilled(EnemyBase poolable)
         {
             poolable.deathFeedback = deathFeedbacks;
+            CoreManager.PlayerDeathEvent += poolable.OnPlayerDeath;
+            CoreManager.PlayerSpawnEvent += poolable.OnPlayerSpawn;
         }
     }
 

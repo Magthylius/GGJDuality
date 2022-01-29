@@ -16,7 +16,7 @@ namespace Duality.Core
         
         void Start()
         {
-            CoreManager.Instance.PlayerDeathEvent += OnPlayerDeath;
+            CoreManager.PlayerDeathEvent += OnPlayerDeath;
         }
 
         private void OnPlayerDeath()

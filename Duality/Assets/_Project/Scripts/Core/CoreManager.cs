@@ -14,6 +14,7 @@ namespace Duality.Core
         [Header("References")] 
         public Camera mainCamera;
         public PlayerController player;
+        public Transform playerSpawnLocation;
         public MMFeedbacks titleEndLoadFeedback;
         public MMFeedbacks titleStartLoadFeedback;
     
@@ -21,11 +22,12 @@ namespace Duality.Core
         [SerializeField] private Color firstColor;
         [SerializeField] private Color secondColor;
 
-        private GameState _gameState;
+        private GameState _currentGameState;
         private int _enemyDeathCount = 0;
 
         public Action<int> EnemyDeathEvent;
-        public Action PlayerDeathEvent;
+        public static Action PlayerDeathEvent;
+        public static Action PlayerSpawnEvent;
 
         public static Action<GameState> GameStateChangedEvent;
         public static Action GameStartedEvent;
@@ -38,7 +40,7 @@ namespace Duality.Core
         
         void Start()
         {
-            gameState = GameState.WaitForStart;
+            CurrentGameState = GameState.WaitForStart;
         }
         
         public void ReportEnemyDeath()
@@ -50,42 +52,60 @@ namespace Duality.Core
         public void ReportPlayerDeath()
         {
             PlayerDeathEvent?.Invoke();
+            CurrentGameState = GameState.Ended;
         }
 
         public void OnFire(InputAction.CallbackContext context)
         {
             if (context.performed)
             {
-                switch (_gameState)
+                switch (_currentGameState)
                 {
                     case GameState.WaitForStart:
                     {
                         if (!titleStartLoadFeedback.IsPlaying)
                         {
                             titleEndLoadFeedback.PlayFeedbacks();
-                            gameState = GameState.OnStart;
+                            CurrentGameState = GameState.Starting;
                         }
 
+                        break;
+                    }
+
+                    case GameState.Starting:
+                    {
+                        if (!titleEndLoadFeedback.IsPlaying)
+                        {
+                            CurrentGameState = GameState.Started;
+                        }
                         break;
                     }
                 }
             }
         }
 
-        public GameState gameState
+        public void Restart()
         {
-            get { return _gameState; }
+            CurrentGameState = GameState.Starting;
+            player.MainTR.position = playerSpawnLocation.position;
+
+            _enemyDeathCount = 0;
+        }
+
+        public GameState CurrentGameState
+        {
+            get => _currentGameState;
             private set
             {
-                _gameState = value;
+                _currentGameState = value;
                 GameStateChangedEvent?.Invoke(value);
                 switch (value)
                 {
-                   case GameState.OnStart:
+                   case GameState.Started:
                        GameStartedEvent?.Invoke();
                        break;
                    
-                   case GameState.GameEnd:
+                   case GameState.Ended:
                        GameEndedEvent?.Invoke();
                        break;
                 }
@@ -95,14 +115,15 @@ namespace Duality.Core
         public int EnemyDeathCount => _enemyDeathCount;
         public static Color FirstColor => Instance.firstColor;
         public static Color SecondColor => Instance.secondColor;
-        public static GameState CurrentState => Instance._gameState;
+        public static GameState CurrentState => Instance._currentGameState;
         public static Transform MainTransform => Instance.player.MainTR;
 
         public enum GameState
         {
             WaitForStart,
-            OnStart,
-            GameEnd
+            Starting,
+            Started,
+            Ended
         }
     }
 }

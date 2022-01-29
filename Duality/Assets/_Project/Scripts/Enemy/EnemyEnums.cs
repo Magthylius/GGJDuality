@@ -9,6 +9,7 @@ namespace Duality.Enemy
         Normal,
         Ragdoll,
         Aiming,
-        Looking
+        Looking,
+        Idle
     }
 }

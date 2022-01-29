@@ -159,6 +159,11 @@ namespace Duality.Player
             CoreManager.Instance.ReportPlayerDeath();
         }
 
+        public void Respawn()
+        {
+            
+        }
+
         public void OnMovement(InputAction.CallbackContext callback)
         {
             _movementInput = callback.ReadValue<Vector2>();
