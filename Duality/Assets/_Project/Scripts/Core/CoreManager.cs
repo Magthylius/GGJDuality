@@ -27,7 +27,9 @@ namespace Duality.Core
         public Action<int> EnemyDeathEvent;
         public Action PlayerDeathEvent;
 
-        public Action<GameState> GameStateChangedEvent;
+        public static Action<GameState> GameStateChangedEvent;
+        public static Action GameStartedEvent;
+        public static Action GameEndedEvent;
 
         private void OnValidate()
         {
@@ -36,7 +38,7 @@ namespace Duality.Core
         
         void Start()
         {
-            _gameState = GameState.WaitForStart;
+            gameState = GameState.WaitForStart;
         }
         
         public void ReportEnemyDeath()
@@ -61,12 +63,31 @@ namespace Duality.Core
                         if (!titleStartLoadFeedback.IsPlaying)
                         {
                             titleEndLoadFeedback.PlayFeedbacks();
-                            _gameState = GameState.Gameplay;
-                            GameStateChangedEvent?.Invoke(_gameState);
+                            gameState = GameState.OnStart;
                         }
 
                         break;
                     }
+                }
+            }
+        }
+
+        public GameState gameState
+        {
+            get { return _gameState; }
+            private set
+            {
+                _gameState = value;
+                GameStateChangedEvent?.Invoke(value);
+                switch (value)
+                {
+                   case GameState.OnStart:
+                       GameStartedEvent?.Invoke();
+                       break;
+                   
+                   case GameState.GameEnd:
+                       GameEndedEvent?.Invoke();
+                       break;
                 }
             }
         }
@@ -80,7 +101,7 @@ namespace Duality.Core
         public enum GameState
         {
             WaitForStart,
-            Gameplay,
+            OnStart,
             GameEnd
         }
     }

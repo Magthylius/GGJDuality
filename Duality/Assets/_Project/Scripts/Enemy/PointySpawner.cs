@@ -5,6 +5,7 @@ using Duality.Core;
 using Duality.Player;
 using Magthylius;
 using MoreMountains.Feedbacks;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Duality.Enemy
@@ -21,11 +22,38 @@ namespace Duality.Enemy
         public float spawnInterval;
         public int maxSpawns = 10;
 
+        private bool _playerInited;
+        private bool _gameStarted;
+        private Coroutine _spawnCor;
+
         protected override void AwakeInitialization()
         {
-            player.InitializedEvent += Cor;
-                
-            void Cor() => StartCoroutine(Spawn());;   
+            player.InitializedEvent += PlayerInit;
+            CoreManager.GameStartedEvent += GameStarted;
+            CoreManager.GameEndedEvent += EndGame;
+
+            void PlayerInit()
+            {
+                _playerInited = true;
+                StartGame();
+            }
+
+            void GameStarted()
+            {
+                _gameStarted = true;
+                StartGame();
+            }
+        }
+
+        private void StartGame()
+        {
+            if (_playerInited && _gameStarted)
+                _spawnCor = StartCoroutine(Spawn());   
+        }
+
+        private void EndGame()
+        {
+            if (_spawnCor != null) StopCoroutine(_spawnCor);
         }
 
         private IEnumerator Spawn()
