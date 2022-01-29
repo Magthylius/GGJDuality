@@ -134,6 +134,12 @@ namespace Duality.Enemy
             line.enabled = true;
         }
 
+        public void ExplosionDamage(float damage)
+        {
+            
+            TakeDamage(0f);
+        }
+
         private IEnumerator AILogic()
         {
             while (true)

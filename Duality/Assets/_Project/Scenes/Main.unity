@@ -2522,11 +2522,30 @@ MonoBehaviour:
   endLinearDrag: 10
   maxMovementSpeed: 15
   spinLerp: 5
-  spinPower: 50
+  spinPower: 20
   endAngularDrag: 10
   maxSpinSpeed: 25
+  explosionForce: 50
+  explosionRadius: 2
+  explosiveFilter:
+    useTriggers: 1
+    useLayerMask: 1
+    useDepth: 1
+    useOutsideDepth: 1
+    useNormalAngle: 1
+    useOutsideNormalAngle: 1
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 2147483647
+    minDepth: -100
+    maxDepth: 100
+    minNormalAngle: 0
+    maxNormalAngle: 0
+  spinSpeedThreshold: 17
+  chargedColor: {r: 0.8962264, g: 0.49048272, b: 0.2240566, a: 1}
   helpStart: {fileID: 1921174735}
   helpEnd: {fileID: 392988095}
+  godMode: 1
 --- !u!4 &732012570
 Transform:
   m_ObjectHideFlags: 0
@@ -3384,6 +3403,11 @@ MonoBehaviour:
   damagerLayers:
     serializedVersion: 2
     m_Bits: 192
+  relevantColliders:
+  - {fileID: 110020571}
+  - {fileID: 1194707359}
+  - {fileID: 929969457}
+  - {fileID: 680835658}
   mode: 1
   pairColor: {r: 0.4056604, g: 0.4056604, b: 0.4056604, a: 1}
   damagePercentile: 0.15
@@ -3866,6 +3890,11 @@ MonoBehaviour:
   damagerLayers:
     serializedVersion: 2
     m_Bits: 192
+  relevantColliders:
+  - {fileID: 929969457}
+  - {fileID: 680835658}
+  - {fileID: 110020571}
+  - {fileID: 1194707359}
   mode: 0
   pairColor: {r: 1, g: 1, b: 1, a: 1}
   damagePercentile: 0.15

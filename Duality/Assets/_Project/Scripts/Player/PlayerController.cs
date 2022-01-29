@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Cinemachine;
 using Duality.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Magthylius;
 using MoreMountains.Feedbacks;
-using UnityEngine.Serialization;
 
 namespace Duality.Player
 {
@@ -40,9 +37,22 @@ namespace Duality.Player
         public float endAngularDrag = 10f;
         public float maxSpinSpeed = 25f;
 
+        [Header("Explosion power")] 
+        public float explosionForce;
+        public float explosionRadius;
+        public ContactFilter2D explosiveFilter;
+        public float spinSpeedThreshold;
+        public Color chargedColor;
+
+        private float _spinSpeedThresholdSqr;
+        private bool _explosiveCharged = false;
+        
         [Header("UI Settings")] 
         public MMFeedbacks helpStart;
         public MMFeedbacks helpEnd;
+
+        [Header("Debug")] 
+        public bool godMode;
         
         private PairElement _main;
         private PairElement _sub;
@@ -74,6 +84,8 @@ namespace Duality.Player
             DeathEvent += YinElement.OnDeath;
             DeathEvent += YangElement.OnDeath;
 
+            _spinSpeedThresholdSqr = MathEx.Square(spinSpeedThreshold);
+
             ResolvePairSettings();
             InitializedEvent?.Invoke();
         }
@@ -86,6 +98,12 @@ namespace Duality.Player
             _mainRB.velocity = _movementStep * movementPower;
             _subRB.AddForce(_sub.transform.up * _mouseClickStep * spinPower * _spinDir, ForceMode2D.Force);
             _subRB.velocity = MathEx.MagnitudeCap(_subRB.velocity, maxSpinSpeed);
+
+            _explosiveCharged = _subRB.SpeedSqr() > _spinSpeedThresholdSqr;
+            if (_explosiveCharged)
+                _sub.SetHollowColor(ColorEx.LerpSnap(_sub.hollowSprite.color, chargedColor, 5f * Time.deltaTime, 0.99f));
+            else
+                _sub.SetHollowColor(ColorEx.LerpSnap(_sub.hollowSprite.color, _sub.OriginalSpinColor, 5f * Time.deltaTime, 0.99f));
         }
         
         public void ToggleMode()
@@ -190,6 +208,7 @@ namespace Duality.Player
         }
         
         public PlayerMode CurrentMode => _mode;
+        public bool ExplosiveCharged => _explosiveCharged;
 
         public Transform MainTR => _main.transform;
     
