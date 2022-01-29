@@ -81,6 +81,11 @@ namespace Duality.Player
             deathFeedback.PlayFeedbacks(transform.position);
         }
 
+        public void OnRespawn()
+        {
+            ResolveTrails();
+        }
+
         private void ResolveTrails()
         {
             switch (mode)

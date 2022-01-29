@@ -17,7 +17,10 @@ namespace Duality.Core
         public Transform playerSpawnLocation;
         public MMFeedbacks titleEndLoadFeedback;
         public MMFeedbacks titleStartLoadFeedback;
-    
+        public MMFeedbacks continueFeedback;
+        public MMFeedbacks playerDeathFeedback;
+        public MMFeedbacks restartFeedback;
+
         [Header("Settings")]
         [SerializeField] private Color firstColor;
         [SerializeField] private Color secondColor;
@@ -55,7 +58,14 @@ namespace Duality.Core
         public void ReportPlayerDeath()
         {
             PlayerDeathEvent?.Invoke();
+            playerDeathFeedback.Events.OnComplete.AddListener(ToRestart);
             CurrentGameState = GameState.Ended;
+
+            void ToRestart()
+            {
+                CurrentGameState = GameState.Restarting;
+                continueFeedback.PlayFeedbacksInReverse();
+            }
         }
 
         public void OnFire(InputAction.CallbackContext context)
@@ -69,6 +79,8 @@ namespace Duality.Core
                         if (!titleStartLoadFeedback.IsPlaying)
                         {
                             titleEndLoadFeedback.PlayFeedbacks();
+                            titleEndLoadFeedback.Events.OnComplete.AddListener(ClickContinue);
+                            
                             CurrentGameState = GameState.Starting;
                         }
 
@@ -77,9 +89,30 @@ namespace Duality.Core
 
                     case GameState.Starting:
                     {
-                        if (!titleEndLoadFeedback.IsPlaying)
+                        if (!titleEndLoadFeedback.IsPlaying && !continueFeedback.IsPlaying)
                         {
+                            continueFeedback.PlayFeedbacksInReverse();
+                            titleEndLoadFeedback.Events.OnComplete.RemoveListener(ClickContinue);
                             CurrentGameState = GameState.Started;
+                        }
+                        break;
+                    }
+
+                    case GameState.Ended:
+                    {
+                        
+                        break;
+                    }
+
+                    case GameState.Restarting:
+                    {
+                        if (!continueFeedback.IsPlaying)
+                        {
+                            restartFeedback.PlayFeedbacks();
+                            player.MovePos(playerSpawnLocation.position);
+                            _enemyDeathCount = 0;
+                            CurrentGameState = GameState.Started;
+                            player.Respawn();
                         }
                         break;
                     }
@@ -87,9 +120,11 @@ namespace Duality.Core
             }
         }
 
+        private void ClickContinue() => continueFeedback.PlayFeedbacks();
+        
         public void Restart()
         {
-            CurrentGameState = GameState.Starting;
+            CurrentGameState = GameState.Restarting;
             player.MovePos(playerSpawnLocation.position);
 
             _enemyDeathCount = 0;
@@ -105,6 +140,10 @@ namespace Duality.Core
                 switch (value)
                 {
                    case GameState.Started:
+                       GameStartedEvent?.Invoke();
+                       break;
+                   
+                   case GameState.Restarting:
                        GameStartedEvent?.Invoke();
                        break;
                    
@@ -126,7 +165,8 @@ namespace Duality.Core
             WaitForStart,
             Starting,
             Started,
-            Ended
+            Ended,
+            Restarting
         }
     }
 }

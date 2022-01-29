@@ -73,6 +73,7 @@ namespace Duality.Player
 
         public Action InitializedEvent;
         public Action DeathEvent;
+        public Action RespawnEvent;
 
         private void Start()
         {
@@ -81,6 +82,8 @@ namespace Duality.Player
 
             DeathEvent += YinElement.OnDeath;
             DeathEvent += YangElement.OnDeath;
+            RespawnEvent += YinElement.OnRespawn;
+            RespawnEvent += YangElement.OnRespawn;
 
             _spinSpeedThresholdSqr = MathEx.Square(spinSpeedThreshold);
 
@@ -106,11 +109,7 @@ namespace Duality.Player
 
         public void MovePos(Vector3 newPos)
         {
-            //joint.enabled = false;
-            YinTR.position = newPos;
-            //YangTR.position = newPos + new Vector3(pairDistance, 0f, 0f);
-            //joint.linearOffset = new Vector2(pairDistance, 0f);
-            //joint.enabled = true;
+            _main.transform.position = newPos;
         }
         
         public void ToggleMode()
@@ -168,7 +167,7 @@ namespace Duality.Player
 
         public void Respawn()
         {
-            
+            RespawnEvent?.Invoke();
         }
 
         public void OnMovement(InputAction.CallbackContext callback)
