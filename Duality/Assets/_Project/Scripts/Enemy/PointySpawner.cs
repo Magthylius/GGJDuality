@@ -32,17 +32,19 @@ namespace Duality.Enemy
             CoreManager.GameStartedEvent += GameStarted;
             CoreManager.GameEndedEvent += EndGame;
 
-            void PlayerInit()
-            {
-                _playerInited = true;
-                StartGame();
-            }
+            
+        }
+        
+        void PlayerInit()
+        {
+            _playerInited = true;
+            StartGame();
+        }
 
-            void GameStarted()
-            {
-                _gameStarted = true;
-                StartGame();
-            }
+        void GameStarted()
+        {
+            _gameStarted = true;
+            StartGame();
         }
 
         private void StartGame()
