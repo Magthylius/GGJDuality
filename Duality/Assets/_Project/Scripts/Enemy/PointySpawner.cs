@@ -31,8 +31,6 @@ namespace Duality.Enemy
             player.InitializedEvent += PlayerInit;
             CoreManager.GameStartedEvent += GameStarted;
             CoreManager.GameEndedEvent += EndGame;
-
-            
         }
         
         void PlayerInit()

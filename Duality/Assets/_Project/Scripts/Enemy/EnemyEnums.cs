@@ -8,6 +8,7 @@ namespace Duality.Enemy
     {
         Normal,
         Ragdoll,
-        Aiming
+        Aiming,
+        Looking
     }
 }

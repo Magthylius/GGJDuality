@@ -66,19 +66,26 @@ namespace Duality.Enemy
 
         private void FixedUpdate()
         {
-            if (mode != EnemyMode.Ragdoll)
+            switch (mode)
             {
-                if (mode != EnemyMode.Aiming && !MathEx.InRange(_targetPosition - transform.position, trackStopDistance))
-                    rigidbody.velocity = _targetDirection * moveSpeed * Time.deltaTime;
-                else
+                case EnemyMode.Normal:
                 {
-                    rigidbody.velocity = Vector2.Lerp(rigidbody.velocity, Vector2.zero, stopSpeed * Time.deltaTime);
-                    if (mode != EnemyMode.Aiming) StartAim();
+                    if (!InTargetRange)
+                        rigidbody.velocity = _targetDirection * moveSpeed * Time.deltaTime;
+                    else
+                        StartAim();
+
+                    goto case EnemyMode.Looking;
                 }
+                case EnemyMode.Aiming:
+                    rigidbody.velocity = Vector2.Lerp(rigidbody.velocity, Vector2.zero, stopSpeed * Time.deltaTime);
+                    goto case EnemyMode.Looking;
                 
-                Quaternion targetRot = Quaternion.Euler(0f, 0f, MathEx.Atan2Deg(_targetDirection.y, _targetDirection.x) + rotOffset);
-                transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, rotSpeed * Time.deltaTime);
-                rigidbody.angularVelocity = Mathf.Lerp(rigidbody.angularVelocity, 0f, rotSpeed * Time.deltaTime);
+                case EnemyMode.Looking:
+                    Quaternion targetRot = Quaternion.Euler(0f, 0f, MathEx.Atan2Deg(_targetDirection.y, _targetDirection.x) + rotOffset);
+                    transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, rotSpeed * Time.deltaTime);
+                    rigidbody.angularVelocity = Mathf.Lerp(rigidbody.angularVelocity, 0f, rotSpeed * Time.deltaTime);
+                    break;
             }
         }
 
@@ -180,9 +187,16 @@ namespace Duality.Enemy
 
         private IEnumerator AimUpdate()
         {
-            yield return new WaitForSeconds(aimTime);
-            EnemyBulletPooler.Instance.Scoop().Shoot(shootPoint.transform.position, transform.up * shootImpulseForce);
+            do
+            {
+                yield return new WaitForSeconds(aimTime);
+                EnemyBulletPooler.Instance.Scoop().Shoot(shootPoint.transform.position, transform.up * shootImpulseForce);
+            } while (InTargetRange);
+
+            mode = EnemyMode.Normal;
         }
+
+        private bool InTargetRange => MathEx.InRange(_targetPosition - transform.position, trackStopDistance);
     }
 
 }
