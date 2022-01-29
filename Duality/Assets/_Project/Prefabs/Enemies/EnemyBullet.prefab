@@ -290,3 +290,4 @@ MonoBehaviour:
   rigidbody: {fileID: 6899605525211053785}
   trail: {fileID: 8904458541120435220}
   lifeTime: 5
+  trailTime: 0.1

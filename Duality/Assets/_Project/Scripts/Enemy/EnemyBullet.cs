@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Duality.Core;
@@ -12,12 +13,13 @@ namespace Duality.Enemy
         public new Rigidbody2D rigidbody;
         public TrailRenderer trail;
         public float lifeTime = 5f;
+
         
         public void Shoot(Vector3 position, Vector2 force)
         {
+            transform.position = position;
             trail.Clear();
             trail.emitting = true;
-            transform.position = position;
             transform.rotation = Quaternion.Euler(0f, 0f, MathEx.Atan2Deg(force.y, force.x) + 90f);
             rigidbody.AddForce(force, ForceMode2D.Impulse);
             StartCoroutine(LifeDecay());
@@ -26,6 +28,7 @@ namespace Duality.Enemy
         private IEnumerator LifeDecay()
         {
             yield return new WaitForSeconds(lifeTime);
+            trail.Clear();
             trail.emitting = false;
             Dump();
         }

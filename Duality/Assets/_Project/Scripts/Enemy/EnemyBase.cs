@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Magthylius;
 using UnityEngine;
 using Duality.Core;
+using Magthylius.Tools;
 using MoreMountains.Feedbacks;
 
 namespace Duality.Enemy
@@ -13,6 +14,9 @@ namespace Duality.Enemy
         [Header("References")]
         public new Rigidbody2D rigidbody;
         public MMFeedbacks deathFeedback;
+        public MMFeedbacks aimFeedback;
+        public MMFeedbacks aimEndFeedback;
+        public SpriteFlicker flicker;
         public LineRenderer line;
         public Transform shootPoint;
 
@@ -101,7 +105,9 @@ namespace Duality.Enemy
 
             mode = EnemyMode.Ragdoll;
             _ragdollStartTime = Time.timeSinceLevelLoad;
-            DisableLine();
+
+            ResetVisuals();
+            
             StopCoroutine(nameof(AimUpdate));
             DamagedEvent?.Invoke();
         }
@@ -110,11 +116,21 @@ namespace Duality.Enemy
         {
             Dump();
             ResetRigidbody();
-            DisableLine();
+            
+            ResetVisuals();
+            
             mode = EnemyMode.Normal;
             StopCoroutine(nameof(AILogic));
             deathFeedback.PlayFeedbacks(transform.position);
             core.ReportEnemyDeath();
+        }
+
+        void ResetVisuals()
+        {
+            DisableLine();
+            aimFeedback.StopFeedbacks();
+            flicker.Stop();
+            aimEndFeedback.PlayFeedbacks();
         }
 
         private void ResetRigidbody()
@@ -128,6 +144,8 @@ namespace Duality.Enemy
         {
             mode = EnemyMode.Aiming;
             EnableLine();
+            flicker.Play();
+            aimFeedback.PlayFeedbacks();
             StartCoroutine(nameof(AimUpdate));
         }
 
@@ -143,8 +161,7 @@ namespace Duality.Enemy
 
         public void ExplosionDamage(float damage)
         {
-            
-            TakeDamage(0f);
+            TakeDamage(damage);
         }
 
         private IEnumerator AILogic()
