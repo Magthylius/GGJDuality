@@ -156,6 +156,7 @@ namespace Duality.Player
         public void Kill()
         {
             DeathEvent?.Invoke();
+            CoreManager.Instance.ReportPlayerDeath();
         }
 
         public void OnMovement(InputAction.CallbackContext callback)
