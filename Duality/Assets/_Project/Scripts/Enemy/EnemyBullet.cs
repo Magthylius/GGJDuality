@@ -15,6 +15,7 @@ namespace Duality.Enemy
         
         public void Shoot(Vector3 position, Vector2 force)
         {
+            trail.Clear();
             trail.emitting = true;
             transform.position = position;
             transform.rotation = Quaternion.Euler(0f, 0f, MathEx.Atan2Deg(force.y, force.x) + 90f);
