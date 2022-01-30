@@ -75,6 +75,8 @@ namespace Duality.Player
         public Action DeathEvent;
         public Action RespawnEvent;
 
+        private bool _lockInput = true;
+
         private void Start()
         {
             _main = YinElement;
@@ -84,6 +86,8 @@ namespace Duality.Player
             DeathEvent += YangElement.OnDeath;
             RespawnEvent += YinElement.OnRespawn;
             RespawnEvent += YangElement.OnRespawn;
+            CoreManager.GameStartedEvent += OnGameStart;
+            CoreManager.GameEndedEvent += OnGameEnd;
 
             _spinSpeedThresholdSqr = MathEx.Square(spinSpeedThreshold);
 
@@ -163,6 +167,8 @@ namespace Duality.Player
         {
             DeathEvent?.Invoke();
             CoreManager.Instance.ReportPlayerDeath();
+            _lockInput = true;
+            print("death");
         }
 
         public void Respawn()
@@ -171,8 +177,21 @@ namespace Duality.Player
             CoreManager.Instance.ReportPlayerSpawn();
         }
 
+        public void OnGameStart()
+        {
+            _lockInput = false;
+            print("Game start");
+        }
+
+        public void OnGameEnd()
+        {
+            _lockInput = true;
+            print("Game end");
+        }
+
         public void OnMovement(InputAction.CallbackContext callback)
         {
+            if (_lockInput) return;;
             _movementInput = callback.ReadValue<Vector2>();
 
             if (callback.performed)
@@ -185,6 +204,7 @@ namespace Duality.Player
 
         public void OnMouseClick(InputAction.CallbackContext callback)
         {
+            if (_lockInput) return;
             _mouseClickInput = callback.ReadValue<float>();
 
             if (callback.performed)
@@ -203,11 +223,13 @@ namespace Duality.Player
 
         public void OnSwap(InputAction.CallbackContext callback)
         {
+            if (_lockInput) return;
             if (callback.performed) ToggleMode();
         }
 
         public void OnHelp(InputAction.CallbackContext callback)
         {
+            if (_lockInput) return;
             if (callback.performed)
             {
                 helpEnd.StopFeedbacks();

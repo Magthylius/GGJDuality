@@ -149,7 +149,7 @@ namespace Duality.Core
                        break;
                    
                    case GameState.Restarting:
-                       GameStartedEvent?.Invoke();
+                       //GameStartedEvent?.Invoke();
                        break;
                    
                    case GameState.Ended:
