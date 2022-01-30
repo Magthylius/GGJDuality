@@ -68,6 +68,11 @@ namespace Duality.Core
             }
         }
 
+        public void ReportPlayerSpawn()
+        {
+            PlayerSpawnEvent?.Invoke();
+        }
+
         public void OnFire(InputAction.CallbackContext context)
         {
             if (context.performed)

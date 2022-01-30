@@ -15,8 +15,9 @@ namespace Duality.Enemy
         [Header("References")]
         public PlayerController player;
         public MMFeedbacks deathFeedbacks;
-        
+
         [Header("Settings")]
+        public float spawnDelay = 2f;
         public float minRange;
         public float maxRange;
         public float spawnInterval;
@@ -24,6 +25,7 @@ namespace Duality.Enemy
 
         private bool _playerInited;
         private bool _gameStarted;
+        private bool _playerDead;
         private Coroutine _spawnCor;
 
         protected override void AwakeInitialization()
@@ -32,6 +34,7 @@ namespace Duality.Enemy
             CoreManager.GameStartedEvent += GameStarted;
             CoreManager.GameEndedEvent += EndGame;
             CoreManager.PlayerSpawnEvent += OnPlayerSpawn;
+            CoreManager.PlayerDeathEvent += OnPlayerDeath;
         }
         
         void PlayerInit()
@@ -55,15 +58,26 @@ namespace Duality.Enemy
         private void EndGame()
         {
             if (_spawnCor != null) StopCoroutine(_spawnCor);
+            StopAllCoroutines();
+        }
+
+        private void OnPlayerDeath()
+        {
+            _playerDead = true;
         }
 
         private void OnPlayerSpawn()
         {
+            _playerDead = false;
             DumpAll();
+            _spawnCor = StartCoroutine(Spawn());
         }
 
         private IEnumerator Spawn()
         {
+            if (_playerDead) yield break;
+            yield return new WaitForSeconds(spawnDelay);
+
             while (true)
             {
                 if (ActiveCount < maxSpawns)

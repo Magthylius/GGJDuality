@@ -168,6 +168,7 @@ namespace Duality.Player
         public void Respawn()
         {
             RespawnEvent?.Invoke();
+            CoreManager.Instance.ReportPlayerSpawn();
         }
 
         public void OnMovement(InputAction.CallbackContext callback)

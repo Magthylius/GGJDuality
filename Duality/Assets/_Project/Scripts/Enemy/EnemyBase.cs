@@ -61,6 +61,8 @@ namespace Duality.Enemy
             mode = EnemyMode.Normal;
 
             core = CoreManager.Instance;
+
+            flicker.Initialize();
         }
 
         private void OnDrawGizmos()
@@ -121,6 +123,7 @@ namespace Duality.Enemy
         {
             mode = EnemyMode.Idle;
             StopAllCoroutines();
+            StopCoroutine(nameof(AimUpdate));
             ResetVisuals();
         }
 
