@@ -79,6 +79,10 @@ namespace Duality.Player
             filledElement.SetActive(false);
             hollowElement.SetActive(false);
             deathFeedback.PlayFeedbacks(transform.position);
+
+            rigidbody.velocity = Vector2.zero;
+            rigidbody.angularVelocity = 0f;
+            rigidbody.rotation = 0f;
         }
 
         public void OnRespawn()

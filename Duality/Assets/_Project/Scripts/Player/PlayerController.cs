@@ -13,7 +13,7 @@ namespace Duality.Player
         [Header("References")] 
         public PairElement YinElement;
         public PairElement YangElement;
-        public RelativeJoint2D joint;
+        public FixedJoint2D joint;
         public CinemachineVirtualCamera VirtualCamera;
         public PlayerFollower mouseFollower;
         public PlayerFollower swapFollower;
@@ -113,7 +113,9 @@ namespace Duality.Player
 
         public void MovePos(Vector3 newPos)
         {
-            _main.transform.position = newPos;
+            //_main.transform.position = newPos;
+            _main.rigidbody.MovePosition(newPos);
+            _sub.rigidbody.MovePosition(_main.rigidbody.position + new Vector2(-3f, 0f));
         }
         
         public void ToggleMode()
@@ -168,25 +170,26 @@ namespace Duality.Player
             DeathEvent?.Invoke();
             CoreManager.Instance.ReportPlayerDeath();
             _lockInput = true;
-            print("death");
+            _movementInput = Vector2.zero;
+            _mouseClickInput = 0f;
+            //joint.enabled = false;
         }
 
         public void Respawn()
         {
             RespawnEvent?.Invoke();
             CoreManager.Instance.ReportPlayerSpawn();
+            //joint.enabled = true;
         }
 
         public void OnGameStart()
         {
             _lockInput = false;
-            print("Game start");
         }
 
         public void OnGameEnd()
         {
             _lockInput = true;
-            print("Game end");
         }
 
         public void OnMovement(InputAction.CallbackContext callback)

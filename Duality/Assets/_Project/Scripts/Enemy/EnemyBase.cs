@@ -52,6 +52,11 @@ namespace Duality.Enemy
         public Action DamagedEvent { get; set; }
         public Action DeathEvent { get; set; }
 
+        private void Awake()
+        {
+            flicker.Initialize();
+        }
+
         private void Start()
         {
             DeathEvent += OnDeath;
@@ -61,8 +66,6 @@ namespace Duality.Enemy
             mode = EnemyMode.Normal;
 
             core = CoreManager.Instance;
-
-            flicker.Initialize();
         }
 
         private void OnDrawGizmos()
